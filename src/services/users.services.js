@@ -76,14 +76,13 @@ const loginUser = async (userData) => {
         } else {
             console.log('User not found');
             return ({
-                status: 400,
+                status: 404,
                 data: null,
                 message: 'User not found'
             })
         }
     } catch (error) {
         console.log('Error in loginUser', error);
-        // Handle error as needed
     }
 }
 

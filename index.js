@@ -2,10 +2,12 @@ import express from 'express'
 import { connect } from 'mongoose'
 import { config } from 'dotenv'
 import router from './src/routes/index.js'
+import cors from 'cors'
 
 config()
 const app = express()
 app.use(express.json());
+app.use(cors())
 const PORT = process.env.PORT
 const URL = process.env.DATABASE_URL
 
