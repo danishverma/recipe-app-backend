@@ -1,6 +1,7 @@
 import quizRepository from '../repository/users.repository.js'
 import bcrypt from 'bcrypt'
-
+import jwt from 'jsonwebtoken'
+const secretKey = 'secret_key'
 const getUserDetailsByEmail = async (email) => {
     try {
         // const userDetailsResult = await UserModal.findOne({ email });
@@ -41,9 +42,11 @@ const registerUser = async (userData) => {
             contact: userData.contact
         }
         const registerUserResult = await quizRepository.registerUser(registerData)
+        let Token = jwt.sign({email}, secretKey, {expiresIn: "24h"})
         console.log('user registered successfully');
         return {
             status: 200,
+            auth: Token,
             data: registerUserResult,
             message: 'user registered successfully'
         }
@@ -64,9 +67,12 @@ const loginUser = async (userData) => {
             // Compare passwords using bcrypt
             const passwordMatch = await bcrypt.compare(password, userDetails.password);
             if (passwordMatch) {
+                let Token = jwt.sign({email}, secretKey, {expiresIn: "24h"})
+                console.log('token', Token);
                 console.log('Login successful');
                 return ({
                     status: 200,
+                    auth: Token,
                     data: userDetails,
                     message: 'Login successful'
                 })

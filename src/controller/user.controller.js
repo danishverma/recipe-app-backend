@@ -5,7 +5,8 @@ const registerUser = async(req, res) => {
         const userDetails = await userServices.registerUser(req.body).then((response)=>{return response})
         return res.status(userDetails.status).send({
             data: userDetails.data,
-            message: userDetails.message
+            message: userDetails.message,
+            token: userDetails.auth
         })
     } catch (error) {
         console.log('error in registering user', error)
@@ -19,7 +20,8 @@ const loginUser = async(req, res) => {
         const userDetails = await userServices.loginUser(req.body).then((response) => {return response})
         return res.status(userDetails.status).send({
             data: userDetails.data,
-            message: userDetails.message
+            message: userDetails.message,
+            token: userDetails.auth
         })
     } catch (error) {
         console.log('error in logging in', error)
