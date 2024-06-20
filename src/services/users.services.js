@@ -42,7 +42,7 @@ const registerUser = async (userData) => {
             contact: userData.contact
         }
         const registerUserResult = await quizRepository.registerUser(registerData)
-        let Token = jwt.sign({email}, secretKey, {expiresIn: "24h"})
+        let Token = jwt.sign({ email }, secretKey, { expiresIn: "24h" })
         console.log('user registered successfully');
         return {
             status: 200,
@@ -67,7 +67,7 @@ const loginUser = async (userData) => {
             // Compare passwords using bcrypt
             const passwordMatch = await bcrypt.compare(password, userDetails.password);
             if (passwordMatch) {
-                let Token = jwt.sign({email}, secretKey, {expiresIn: "24h"})
+                let Token = jwt.sign({ email }, secretKey, { expiresIn: "24h" })
                 console.log('token', Token);
                 console.log('Login successful');
                 return ({
@@ -78,6 +78,11 @@ const loginUser = async (userData) => {
                 })
             } else {
                 console.log('Incorrect password');
+                return ({
+                    status: 401,
+                    data: null,
+                    message: 'Incorrect password'
+                })
             }
         } else {
             console.log('User not found');
