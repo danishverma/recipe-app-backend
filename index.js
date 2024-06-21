@@ -9,7 +9,8 @@ const app = express()
 app.use(express.json());
 app.use(cors())
 const PORT = process.env.PORT
-const URL = process.env.DATABASE_URL
+// const URL = process.env.DATABASE_URL
+const URL = process.env.PRODUCTION_URL
 
 app.use("/", router)
 connect(`${URL}`).then(()=>{
