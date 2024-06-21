@@ -20,8 +20,8 @@ const getUserDetailsByEmail = async (email) => {
 }
 
 const registerUser = async (userData) => {
+    const email = userData.email
     try {
-        const { email } = userData;
         // Check if user already exists with the provided email
         const existingUser = await getUserDetailsByEmail(email);
         if (existingUser) {
@@ -41,11 +41,15 @@ const registerUser = async (userData) => {
             password: hashedPassword,
             contact: userData.contact
         }
+        console.log('regiter data', registerData)
         const registerUserResult = await quizRepository.registerUser(registerData)
-        let Token = jwt.sign({ email }, secretKey, { expiresIn: "24h" })
+
+        const id = registerUserResult._id
+        console.log('id', id);
+        let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
         console.log('user registered successfully');
         return {
-            status: 200,
+            status: 201,
             auth: Token,
             data: registerUserResult,
             message: 'user registered successfully'
@@ -62,12 +66,15 @@ const loginUser = async (userData) => {
         const password = userData.password;
         // Get user details by email
         const userDetails = await getUserDetailsByEmail(email);
+
+        const id = userDetails._id
+        console.log(id, 'id');
         // If user exists, compare passwords
         if (userDetails) {
             // Compare passwords using bcrypt
             const passwordMatch = await bcrypt.compare(password, userDetails.password);
             if (passwordMatch) {
-                let Token = jwt.sign({ email }, secretKey, { expiresIn: "24h" })
+                let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
                 console.log('token', Token);
                 console.log('Login successful');
                 return ({
