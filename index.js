@@ -13,6 +13,12 @@ const PORT = process.env.PORT
 const URL = process.env.PRODUCTION_URL
 
 app.use("/", router)
+app.get("/test",(req, res) => {
+    res.json({
+        message: "app is working"
+    })
+})
+console.log("=== mongod url ===",URL)
 connect(`${URL}`).then(()=>{
     app.listen(PORT, ()=>{
         console.log('Server is running on port:', PORT)
@@ -20,3 +26,5 @@ connect(`${URL}`).then(()=>{
 }).catch((err) => {
     console.error('Error connecting to MongoDB:', err);
 });
+
+export default app
