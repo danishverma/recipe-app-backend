@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors())
 const PORT = process.env.PORT
 // const URL = process.env.DATABASE_URL
-const URL = process.env.PRODUCTION_URL
+const URL = process.env.MONGODB_URI
 
 app.use("/", router)
 app.get("/test",(req, res) => {
@@ -19,7 +19,7 @@ app.get("/test",(req, res) => {
     })
 })
 console.log("=== mongod url ===",URL)
-connect(`${URL}`).then(()=>{
+connect(URL).then(()=>{
     app.listen(PORT, ()=>{
         console.log('Server is running on port:', PORT)
     })
