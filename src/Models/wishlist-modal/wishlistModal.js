@@ -1,10 +1,12 @@
-import { Timestamp } from 'mongodb'
-import mongoose from 'mongoose'
-const { Schema } = mongoose
+import mongoose from 'mongoose';
 
-const userSchema = new Schema({
+const { Schema } = mongoose;
+
+const wishlistSchema = new Schema({
     user_id: String,
     recipe: String,
-    created_at: Timestamp,
-    updated_at: Timestamp
-})
+}, {timestamps: true});
+
+const Wishlist = mongoose.model('Wishlist', wishlistSchema);
+
+export default Wishlist;
