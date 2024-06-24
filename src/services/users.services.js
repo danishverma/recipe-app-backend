@@ -1,11 +1,11 @@
-import quizRepository from '../repository/users.repository.js'
+import userRepository from '../repository/users.repository.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const secretKey = 'secret_key'
 const getUserDetailsByEmail = async (email) => {
     try {
         // const userDetailsResult = await UserModal.findOne({ email });
-        const userDetailsResult = await quizRepository.loginUser({ email })
+        const userDetailsResult = await userRepository.loginUser({ email })
         if (userDetailsResult) {
             console.log('User already exists:', userDetailsResult);
             return userDetailsResult; // Return user details
@@ -42,7 +42,7 @@ const registerUser = async (userData) => {
             contact: userData.contact
         }
         console.log('regiter data', registerData)
-        const registerUserResult = await quizRepository.registerUser(registerData)
+        const registerUserResult = await userRepository.registerUser(registerData)
 
         const id = registerUserResult._id
         console.log('id', id);
@@ -72,7 +72,7 @@ const loginUser = async (userData) => {
         // If user exists, compare passwords
         if (userDetails) {
             // Compare passwords using bcrypt
-            const passwordMatch = await bcrypt.compare(password, userDetails.password);
+            const passwordMatch = bcrypt.compare(password, userDetails.password);
             if (passwordMatch) {
                 let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
                 console.log('token', Token);
