@@ -12,7 +12,7 @@ import appRouting from './src/routes/index.js'
 appRouting(app);
 const PORT = process.env.PORT || 8800
 // const URL = process.env.DATABASE_URL
-const URL = process.env.MONGODB_URI
+const URL = process.env.MONGO_URI
 
 // app.use("/", router)
 
