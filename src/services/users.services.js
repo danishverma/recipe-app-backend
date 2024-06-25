@@ -1,120 +1,68 @@
 import userRepository from '../repository/users.repository.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-const secretKey = process.env.SECRET_KEY
-const getUserDetailsByEmail = async (email) => {
-    try {
-        // const userDetailsResult = await UserModal.findOne({ email });
-        const userDetailsResult = await userRepository.loginUser({ email })
-        if (userDetailsResult) {
-            console.log('User already exists:', userDetailsResult);
-            return userDetailsResult; // Return user details
-        } else {
-            console.log('User not found');
-            return null; // Return null if user not found
-        }
-    } catch (error) {
-        console.log('Error in getting user by email', error);
-        throw error; // Rethrow the error for handling in upper layers
-    }
-}
-
-const registerUser = async (userData) => {
-    const email = userData.email
-    try {
-        // Check if user already exists with the provided email
-        const existingUser = await getUserDetailsByEmail(email);
-        if (existingUser) {
-            console.log('User with this email already exists');
-            return {
-                status: 400,
-                data: null,
-                message: 'User with this email already exists'
-            }
-        }
-        const password = userData.password
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const registerData = {
-            first_name: userData.first_name,
-            last_name: userData.last_name,
-            email: userData.email,
-            password: hashedPassword,
-            contact: userData.contact
-        }
-        console.log('regiter data', registerData)
-        const registerUserResult = await userRepository.registerUser(registerData)
-
-        const id = registerUserResult._id
-        console.log('id', id);
-        let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
-        console.log('user registered successfully');
-        return {
-            status: 201,
-            auth: Token,
-            data: registerUserResult,
-            message: 'user registered successfully'
-        }
-    } catch (error) {
-        console.log('Error in registering user', error);
-    }
-}
-
-// const loginUser = async (userData) => {
+import { commonMessages } from '../utils/constants.js'
+// const secretKey = process.env.SECRET_KEY
+// const getUserDetailsByEmail = async (email) => {
 //     try {
-//         console.log('login service ', userData)
-//         const email = userData.email;
-//         const password = userData.password;
-//         // Get user details by email
-//         const userDetails = await getUserDetailsByEmail(email);
-
-//         const id = userDetails._id
-//         console.log(id, 'id');
-//         // If user exists, compare passwords
-//         if (userDetails) {
-//             // Compare passwords using bcrypt
-//             const passwordMatch = bcrypt.compare(password, userDetails.password);
-//             if (passwordMatch) {
-// let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
-// console.log('token', Token);
-// console.log('Login successful');
-// return ({
-//     status: 200,
-//     auth: Token,
-//     data: userDetails,
-//     message: 'Login successful'
-// })
-//             } else {
-//                 console.log('Incorrect password');
-//                 return ({
-//                     status: 401,
-//                     data: null,
-//                     message: 'Incorrect password'
-//                 })
-//             }
+//         // const userDetailsResult = await UserModal.findOne({ email });
+//         const userDetailsResult = await userRepository.fetchSingleData({ email })
+//         if (userDetailsResult) {
+//             return userDetailsResult; // Return user details
 //         } else {
-//             console.log('User not found');
-//             return ({
-//                 status: 404,
-//                 data: null,
-//                 message: 'User not found'
-//             })
+//             return null; // Return null if user not found
 //         }
 //     } catch (error) {
-//         console.log('Error in loginUser', error);
+//         throw error; // Rethrow the error for handling in upper layers
 //     }
 // }
+
+const registerUser = async (credentials) => {
+    try {
+        // Check if user already exists with the provided email
+        const existingUser = await userRepository.fetchSingleData({ email: credentials.email }).catch((error) => {
+            throw commonMessages.INTERNAL_SERVER_ERROR
+        })
+        if (existingUser) {
+            throw commonMessages.BAD_REQUEST
+        }
+        else {
+        const password = credentials.password
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const registerData = {
+            first_name: credentials.first_name,
+            last_name: credentials.last_name,
+            email: credentials.email,
+            password: hashedPassword,
+            contact: credentials.contact
+        }
+        const registerUserResult = await userRepository.createUser(registerData).catch(()=>{
+            throw commonMessages.INTERNAL_SERVER_ERROR
+        })
+        const id = registerUserResult._id
+        let jwtToken = jwt.sign({ id }, 'secret_key', { expiresIn: "24h" })
+        return ({
+            token: jwtToken,
+            id: registerUserResult._id
+        })
+    }
+    } catch (error) {
+        throw error
+    }
+}
+
 const loginUser = async (credentials) => {
     try {
         // checking if user exist or not
         const userDetails = await userRepository.fetchSingleData({ email: credentials.email }).catch((error) => {
-            throw "Error occurred while processing your request. Please try after some time or if problem continues kindly contact with support team."
+            throw commonMessages.INTERNAL_SERVER_ERROR
         })
         if (userDetails) {
             // comparing the password
             const passwordMatch = await bcrypt.compare(credentials.password, userDetails.password);
             if (passwordMatch) {
                 // generate JWT token here
-                let jwtToken = jwt.sign({ id: userDetails._id }, secretKey, { expiresIn: "24h" })
+                let jwtToken = jwt.sign({ id: userDetails._id }, 'secret_key', { expiresIn: "24h" })
                 return ({
                     token: jwtToken,
                     id: userDetails._id
