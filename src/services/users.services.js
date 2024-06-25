@@ -61,7 +61,7 @@ const registerUser = async (userData) => {
 
 const loginUser = async (userData) => {
     try {
-        console.log('login service ')
+        console.log('login service ', userData)
         const email = userData.email;
         const password = userData.password;
         // Get user details by email

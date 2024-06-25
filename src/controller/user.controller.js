@@ -15,7 +15,7 @@ const registerUser = async(req, res) => {
 
 const loginUser = async(req, res) => {
     try {
-        console.log('jghffg')
+        console.log('login request ', req)
         const userDetails = await userServices.loginUser(req.body)
         return res.status(userDetails.status).send({
             data: userDetails.data,

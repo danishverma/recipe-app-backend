@@ -7,7 +7,7 @@ import cors from 'cors'
 config()
 const app = express()
 app.use(express.json());
-app.use(cors())
+app.use(cors()) 
 const PORT = process.env.PORT
 // const URL = process.env.DATABASE_URL
 const URL = process.env.MONGODB_URI
