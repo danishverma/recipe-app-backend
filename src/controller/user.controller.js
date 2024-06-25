@@ -1,4 +1,5 @@
 import userServices from '../services/users.services.js'
+import { generateResponse } from '../utils/utilityFunctions.js'
 
 const registerUser = async(req, res) => {
     try {
@@ -15,15 +16,15 @@ const registerUser = async(req, res) => {
 
 const loginUser = async(req, res) => {
     try {
-        console.log('login request ', req)
-        const userDetails = await userServices.loginUser(req.body)
-        return res.status(userDetails.status).send({
-            data: userDetails.data,
-            message: userDetails.message,
-            token: userDetails.auth
+        const userDetails = await userServices.loginUser(req.body).catch((error) => {
+            throw {
+                statusCode: error?.statusCode ?? 500,
+                message: error?.message ??  "Internal server error"
+            }
         })
+        return generateResponse(res, userDetails)
     } catch (error) {
-        console.log('error in logging in', error)
+        return generateResponse(res, [],error.statusCode, error.message)
     }
 }
 export default {

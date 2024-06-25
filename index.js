@@ -1,7 +1,6 @@
 import express from 'express'
 import { connect } from 'mongoose'
 import { config } from 'dotenv'
-import router from './src/routes/index.js'
 import cors from 'cors'
 
 config()

@@ -59,65 +59,74 @@ const registerUser = async (userData) => {
     }
 }
 
-const loginUser = async (userData) => {
-    try {
-        console.log('login service ', userData)
-        const email = userData.email;
-        const password = userData.password;
-        // Get user details by email
-        const userDetails = await getUserDetailsByEmail(email);
-
-        const id = userDetails._id
-        console.log(id, 'id');
-        // If user exists, compare passwords
-        if (userDetails) {
-            // Compare passwords using bcrypt
-            const passwordMatch = bcrypt.compare(password, userDetails.password);
-            if (passwordMatch) {
-                let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
-                console.log('token', Token);
-                console.log('Login successful');
-                return ({
-                    status: 200,
-                    auth: Token,
-                    data: userDetails,
-                    message: 'Login successful'
-                })
-            } else {
-                console.log('Incorrect password');
-                return ({
-                    status: 401,
-                    data: null,
-                    message: 'Incorrect password'
-                })
-            }
-        } else {
-            console.log('User not found');
-            return ({
-                status: 404,
-                data: null,
-                message: 'User not found'
-            })
-        }
-    } catch (error) {
-        console.log('Error in loginUser', error);
-    }
-}
-// const loginUser = async (credentials) => {
+// const loginUser = async (userData) => {
 //     try {
-//         // checking if user exist or not
-//         const userDetails = await userRepository.fetchSingleData({email: credentials.email}).catch((error) => {
-//             throw "Error occurred while processing your request. Please try after some time or if problem continues kindly contact with support team."
-//         })
-//         if(userDetails) {
-//             // logic to login
-//             return;
+//         console.log('login service ', userData)
+//         const email = userData.email;
+//         const password = userData.password;
+//         // Get user details by email
+//         const userDetails = await getUserDetailsByEmail(email);
+
+//         const id = userDetails._id
+//         console.log(id, 'id');
+//         // If user exists, compare passwords
+//         if (userDetails) {
+//             // Compare passwords using bcrypt
+//             const passwordMatch = bcrypt.compare(password, userDetails.password);
+//             if (passwordMatch) {
+// let Token = jwt.sign({ id }, secretKey, { expiresIn: "24h" })
+// console.log('token', Token);
+// console.log('Login successful');
+// return ({
+//     status: 200,
+//     auth: Token,
+//     data: userDetails,
+//     message: 'Login successful'
+// })
+//             } else {
+//                 console.log('Incorrect password');
+//                 return ({
+//                     status: 401,
+//                     data: null,
+//                     message: 'Incorrect password'
+//                 })
+//             }
+//         } else {
+//             console.log('User not found');
+//             return ({
+//                 status: 404,
+//                 data: null,
+//                 message: 'User not found'
+//             })
 //         }
-//         throw "User with given credentials Does not exist."
 //     } catch (error) {
-//         throw error;
+//         console.log('Error in loginUser', error);
 //     }
 // }
+const loginUser = async (credentials) => {
+    try {
+        // checking if user exist or not
+        const userDetails = await userRepository.fetchSingleData({ email: credentials.email }).catch((error) => {
+            throw "Error occurred while processing your request. Please try after some time or if problem continues kindly contact with support team."
+        })
+        if (userDetails) {
+            // comparing the password
+            const passwordMatch = await bcrypt.compare(credentials.password, userDetails.password);
+            if (passwordMatch) {
+                // generate JWT token here
+                let jwtToken = jwt.sign({ id: userDetails._id }, secretKey, { expiresIn: "24h" })
+                return ({
+                    token: jwtToken,
+                    id: userDetails._id
+                })
+            }
+            throw { statusCode: 400, message: "Password Doesn't match." }
+        }
+        throw { statusCode: 404, message: "User with given credentials Does not exist." }
+    } catch (error) {
+        throw error;
+    }
+}
 export default {
     registerUser,
     loginUser
