@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "author": "Danish Verma",
   "license": "ISC",
@@ -18,7 +18,9 @@
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
-    "mongoose": "^8.4.1",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.3"
   }
 }
