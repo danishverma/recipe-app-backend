@@ -39,6 +39,7 @@ const registerUser = async (credentials) => {
         const registerUserResult = await userRepository.createUser(registerData).catch(()=>{
             throw commonMessages.INTERNAL_SERVER_ERROR
         })
+        console.log(registerUserResult, 'registerUserResult');
         const id = registerUserResult._id
         let jwtToken = jwt.sign({ id }, 'secret_key', { expiresIn: "24h" })
         return ({
