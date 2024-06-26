@@ -32,10 +32,10 @@ const fetchMultipleData = (whereCondition={}) => {
 }
 const createUser = async (user) => {
     try {
-        await UserModal.create(user).catch((error) => {
+        let newUser = await UserModal.create(user).catch((error) => {
             throw error
         })
-        return;
+        return newUser;
     } catch (error) {
         throw error;
     }
