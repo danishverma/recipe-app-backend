@@ -36,6 +36,7 @@ const registerUser = async (credentials) => {
             password: hashedPassword,
             contact: credentials.contact
         }
+        console.log('registerData', registerData);
         const registerUserResult = await userRepository.createUser(registerData).catch(()=>{
             throw commonMessages.INTERNAL_SERVER_ERROR
         })
