@@ -19,10 +19,12 @@ import { commonMessages } from '../utils/constants.js'
 
 const registerUser = async (credentials) => {
     try {
+        console.log('credentials', credentials);
         // Check if user already exists with the provided email
         const existingUser = await userRepository.fetchSingleData({ email: credentials.email }).catch((error) => {
             throw commonMessages.INTERNAL_SERVER_ERROR
         })
+        console.log('check existing user', existingUser);
         if (existingUser) {
             throw commonMessages.BAD_REQUEST
         }

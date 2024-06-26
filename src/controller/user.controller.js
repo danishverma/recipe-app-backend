@@ -2,6 +2,7 @@ import userServices from '../services/users.services.js'
 import { generateResponse } from '../utils/utilityFunctions.js'
 
 const registerUser = async(req, res) => {
+    console.log('req.body', req.body);
     try {
         const userDetails = await userServices.registerUser(req.body).catch((error)=>{
             throw {
