@@ -1,29 +1,8 @@
 import UserModal from '../Models/user-models/userModal.js'
 
-// const registerUser = async(userData) => {
-//     try {
-//         console.log(userData, '@1 register')
-//         const user = await UserModal.create(userData)
-//         console.log(user, 'register')
-//         return user
-//     } catch (error) {
-//         console.log('Error in creating user:', error)
-//         throw error
-//     }
-// }
-
-// const loginUser = async(email) => {
-//     try {
-//         const user = await UserModal.findOne(email)
-//         return user
-//     } catch (error) {
-//         console.log('error in login', error);
-//     }
-// }
-
-const fetchMultipleData = (whereCondition={}) => {
+const fetchMultipleData = async(whereCondition={}) => {
     try {
-        return UserModal.find(whereCondition).catch((error) => {
+        return await UserModal.find(whereCondition).catch((error) => {
             throw error
         })
     } catch (error) {
@@ -42,10 +21,12 @@ const createUser = async (user) => {
 }
 
 const fetchSingleData = async (whereCondition) => {
+    console.log(whereCondition, 'yiewi');
     try {
         const userDetails = await UserModal.findOne(whereCondition).catch((error) => {
             throw error
         })
+        console.log(userDetails, 'etuy');
         return userDetails;
     } catch (error) {
         throw error
@@ -72,12 +53,20 @@ const deleteUser = async (whereCondition ) => {
         throw error
     }
 }
+    
+const getById = async(id) => {
+    try {
+        const user = await UserModal.findById(id).catch(err=>{throw err})
+        return user
+    } catch (error) {
+        throw error
+    }
+}
 export default  {
-    // registerUser,
-    // loginUser,
     fetchSingleData,
     fetchMultipleData,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getById
 }

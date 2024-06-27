@@ -1,3 +1,4 @@
+
 import userServices from '../services/users.services.js'
 import { generateResponse } from '../utils/utilityFunctions.js'
 
@@ -6,7 +7,7 @@ const registerUser = async(req, res) => {
     try {
         const userDetails = await userServices.registerUser(req.body).catch((error)=>{
             throw {
-                statusCode: error?.statusCode ?? 500,
+                statusCode: error?.statusCode ?? statusCode.INTERNAL_SERVER_ERROR,
                 message: error?.message ??  "Internal server error"
             }
         })
@@ -29,7 +30,23 @@ const loginUser = async(req, res) => {
         return generateResponse(res, [],error.statusCode, error.message)
     }
 }
+
+const fetchSingleData = async(req, res) => {
+    // console.log(req.params,'params');
+    try {
+        const userDetails = await userServices.fetchSingleData(req.params).catch((error) => {
+            throw {
+                statusCode: error?.statusCode ?? 500,
+                message: error?.message ??  "Internal server error"
+            }
+        })
+        return generateResponse(res, userDetails)
+    } catch (error) {
+        return generateResponse(res, [],error.statusCode, error.message)
+    }
+}
 export default {
     registerUser,
-    loginUser
+    loginUser,
+    fetchSingleData
 }

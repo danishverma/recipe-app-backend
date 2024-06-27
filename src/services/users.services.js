@@ -2,21 +2,9 @@ import userRepository from '../repository/users.repository.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { commonMessages } from '../utils/constants.js'
-// const secretKey = process.env.SECRET_KEY
-// const getUserDetailsByEmail = async (email) => {
-//     try {
-//         // const userDetailsResult = await UserModal.findOne({ email });
-//         const userDetailsResult = await userRepository.fetchSingleData({ email })
-//         if (userDetailsResult) {
-//             return userDetailsResult; // Return user details
-//         } else {
-//             return null; // Return null if user not found
-//         }
-//     } catch (error) {
-//         throw error; // Rethrow the error for handling in upper layers
-//     }
-// }
-
+import { ObjectId } from 'mongodb' 
+import { convertMongoosId } from '../utils/utilityFunctions.js'
+import mongoose from 'mongoose'
 const registerUser = async (credentials) => {
     try {
         console.log('credentials', credentials);
@@ -29,27 +17,27 @@ const registerUser = async (credentials) => {
             throw commonMessages.BAD_REQUEST
         }
         else {
-        const password = credentials.password
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const registerData = {
-            first_name: credentials.first_name,
-            last_name: credentials.last_name,
-            email: credentials.email,
-            password: hashedPassword,
-            contact: credentials.contact
+            const password = credentials.password
+            const hashedPassword = await bcrypt.hash(password, 10)
+            const registerData = {
+                first_name: credentials.first_name,
+                last_name: credentials.last_name,
+                email: credentials.email,
+                password: hashedPassword,
+                contact: credentials.contact
+            }
+            console.log('registerData', registerData);
+            const registerUserResult = await userRepository.createUser(registerData).catch(() => {
+                throw commonMessages.INTERNAL_SERVER_ERROR
+            })
+            console.log(registerUserResult, 'registerUserResult');
+            const id = registerUserResult._id
+            let jwtToken = jwt.sign({ id }, 'secret_key', { expiresIn: "24h" })
+            return ({
+                token: jwtToken,
+                id: registerUserResult._id
+            })
         }
-        console.log('registerData', registerData);
-        const registerUserResult = await userRepository.createUser(registerData).catch(()=>{
-            throw commonMessages.INTERNAL_SERVER_ERROR
-        })
-        console.log(registerUserResult, 'registerUserResult');
-        const id = registerUserResult._id
-        let jwtToken = jwt.sign({ id }, 'secret_key', { expiresIn: "24h" })
-        return ({
-            token: jwtToken,
-            id: registerUserResult._id
-        })
-    }
     } catch (error) {
         throw error
     }
@@ -79,7 +67,29 @@ const loginUser = async (credentials) => {
         throw error;
     }
 }
+    const fetchSingleData = async (credentials) => {
+        console.log('credentials', credentials)
+        // const {id} = credentials
+        // const userId  = {"_id":new ObjectId(credentials.id)}
+        // const newId = new mongoose.Types.ObjectId(credentials.id)
+        // console.log('====> newId <=========', newId)
+        // console.log(new ObjectId(credentials.id), 'userId')
+        try {
+            const userDetails = await userRepository.getById(credentials.id).catch((error) => {
+                throw commonMessages.INTERNAL_SERVER_ERROR
+            })
+            console.log(userDetails, 'userdetails');
+            if (userDetails) {
+                return ({
+                    data: userDetails
+                })
+            } throw { statusCode: 404, message: "User with given credentials Does not exist." }
+        } catch (error) {
+            throw error
+        }
+    }
 export default {
     registerUser,
-    loginUser
+    loginUser,
+    fetchSingleData
 }
