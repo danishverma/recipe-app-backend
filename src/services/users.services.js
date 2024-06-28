@@ -31,11 +31,11 @@ const registerUser = async (credentials) => {
                 throw commonMessages.INTERNAL_SERVER_ERROR
             })
             console.log(registerUserResult, 'registerUserResult');
-            const id = registerUserResult._id
+            const id = registerUserResult.id
             let jwtToken = jwt.sign({ id }, 'secret_key', { expiresIn: "24h" })
             return ({
                 token: jwtToken,
-                id: registerUserResult._id
+                id: registerUserResult.id
             })
         }
     } catch (error) {
@@ -54,10 +54,10 @@ const loginUser = async (credentials) => {
             const passwordMatch = await bcrypt.compare(credentials.password, userDetails.password);
             if (passwordMatch) {
                 // generate JWT token here
-                let jwtToken = jwt.sign({ id: userDetails._id }, 'secret_key', { expiresIn: "24h" })
+                let jwtToken = jwt.sign({ id: userDetails.id }, 'secret_key', { expiresIn: "24h" })
                 return ({
                     token: jwtToken,
-                    id: userDetails._id
+                    id: userDetails.id
                 })
             }
             throw { statusCode: 400, message: "Password Doesn't match." }
@@ -69,13 +69,8 @@ const loginUser = async (credentials) => {
 }
     const fetchSingleData = async (credentials) => {
         console.log('credentials', credentials)
-        // const {id} = credentials
-        // const userId  = {"_id":new ObjectId(credentials.id)}
-        // const newId = new mongoose.Types.ObjectId(credentials.id)
-        // console.log('====> newId <=========', newId)
-        // console.log(new ObjectId(credentials.id), 'userId')
         try {
-            const userDetails = await userRepository.getById(credentials.id).catch((error) => {
+            const userDetails = await userRepository.fetchSingleData(credentials).catch((error) => {
                 throw commonMessages.INTERNAL_SERVER_ERROR
             })
             console.log(userDetails, 'userdetails');
