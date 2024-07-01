@@ -21,12 +21,10 @@ const createUser = async (user) => {
 }
 
 const fetchSingleData = async (whereCondition) => {
-    console.log(whereCondition, 'yiewi');
     try {
         const userDetails = await UserModal.findOne(whereCondition).catch((error) => {
             throw error
         })
-        console.log(userDetails, 'etuy');
         return userDetails;
     } catch (error) {
         throw error

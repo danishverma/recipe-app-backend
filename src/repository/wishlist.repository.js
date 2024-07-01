@@ -1,4 +1,4 @@
-import WishlistModal from "../Models/wishlist-modal/wishlistModal";
+import WishlistModal from "../Models/wishlist-modal/wishlistModal.js";
 
 const getAllWishistItems = async(whereCondition) => {
     try {
@@ -13,7 +13,7 @@ const getAllWishistItems = async(whereCondition) => {
 
 const addItemstoWishlist = async(whereCondition) => {
     try {
-        const wishlistResult = await WishlistModal.insertOne(whereCondition).catch((err)=>{
+        const wishlistResult = await WishlistModal.create(whereCondition).catch((err)=>{
             throw err
         })
         return wishlistResult

@@ -1,10 +1,10 @@
 import express from 'express'
-import wishlistController from '../../controller/wishlist.controller'
+import wishlistController from '../../controller/wishlist.controller.js'
 
 const router = express.Router()
 
-router.get("/:id", wishlistController.getAllWishistItems)
-router.post("/addItem", wishlistController.addItemstoWishlist)
+router.get("/:user_id", wishlistController.getAllWishistItems)
+router.post("/add", wishlistController.addItemstoWishlist)
 router.delete("/remove", wishlistController.removeItemsFromWishlist)
 
 export default router
