@@ -83,8 +83,19 @@ const loginUser = async (credentials) => {
             throw error
         }
     }
+
+    const deleteUser = async (credentials) => {
+        try {
+                return await userRepository.deleteUser(credentials).catch((error) => {
+                throw commonMessages.INTERNAL_SERVER_ERROR
+            })
+        } catch (error) {
+            throw error
+        }
+    }
 export default {
     registerUser,
     loginUser,
-    fetchSingleData
+    fetchSingleData,
+    deleteUser
 }
