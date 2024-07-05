@@ -86,13 +86,19 @@ const loginUser = async (credentials) => {
 
     const deleteUser = async (credentials) => {
         try {
+            console.log(credentials,"credentials");
+            const userDetails = await fetchSingleData(credentials); 
+            console.log(userDetails,"delete service");
+            if (userDetails) {
                 return await userRepository.deleteUser(credentials).catch((error) => {
-                throw commonMessages.INTERNAL_SERVER_ERROR
-            })
+                    throw commonMessages.INTERNAL_SERVER_ERROR;
+                });
+            }
         } catch (error) {
             throw error
         }
     }
+    
 export default {
     registerUser,
     loginUser,
