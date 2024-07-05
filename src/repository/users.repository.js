@@ -43,7 +43,7 @@ const updateUser = async (whereCondition, updatedData) => {
 
 const deleteUser = async (whereCondition ) => {
     try {
-        await UserModal.deleteOne(whereCondition).catch(error => {
+        const data=await UserModal.deleteOne(whereCondition).catch(error => {
             throw error;
         })
         return;

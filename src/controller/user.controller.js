@@ -45,8 +45,26 @@ const fetchSingleData = async(req, res) => {
         return generateResponse(res, [],error.statusCode, error.message)
     }
 }
+
+const deleteUser = async (req, res) => {
+    try {
+        console.log(req,"reqdeleete");
+        const userDetails = await userServices.deleteUser(req.params).catch((error) => {
+            throw {
+                statusCode: error?.statusCode ?? 500,
+                message: error?.message ??  "Internal server error"
+            }
+        })
+        console.log(userDetails,'tytutt');
+        console.log(res,"res");
+        return generateResponse(res, userDetails)
+    } catch (error) {
+        return generateResponse(res, [],error.statusCode, error.message)
+    }
+}
 export default {
     registerUser,
     loginUser,
-    fetchSingleData
+    fetchSingleData,
+    deleteUser
 }

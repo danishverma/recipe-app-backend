@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get("/:user_id", wishlistController.getAllWishistItems)
 router.post("/add", wishlistController.addItemstoWishlist)
-router.delete("/remove", wishlistController.removeItemsFromWishlist)
+router.delete("/:id", wishlistController.removeItemsFromWishlist)
 
 export default router

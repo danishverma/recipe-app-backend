@@ -31,7 +31,7 @@ const addItemstoWishlist = async(req, res) => {
 
 const removeItemsFromWishlist = async(req, res) => {
     try {
-        const wishlistResult = await wishlistService.removeItemsFromWishlist(req.body).catch((error)=>{
+        const wishlistResult = await wishlistService.removeItemsFromWishlist(req.params).catch((error)=>{
             throw {
                 statusCode: error?.statusCode ?? statusCode.INTERNAL_SERVER_ERROR,
                 message: error?.message ??  "Internal server error"
