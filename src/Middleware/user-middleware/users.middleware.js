@@ -16,4 +16,15 @@ const signUpMiddleware = (req, res, next) => {
 
 }
 
-export default signUpMiddleware
+const checkRole = (req, res, next) => {
+    if(req.body.role === 'SUPER_ADMIN'){
+        next()
+    } else {
+        return
+    }
+}
+
+export default {
+    signUpMiddleware,
+    checkRole
+}

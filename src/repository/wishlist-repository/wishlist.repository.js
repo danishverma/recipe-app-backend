@@ -1,4 +1,4 @@
-import WishlistModal from "../Models/wishlist-modal/wishlistModal.js";
+import WishlistModal from "../../Models/wishlist-modal/wishlistModal.js";
 
 const getAllWishistItems = async(whereCondition) => {
     try {

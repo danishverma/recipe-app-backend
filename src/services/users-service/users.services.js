@@ -1,10 +1,8 @@
-import userRepository from '../repository/users.repository.js'
+import userRepository from '../../repository/users-repository/users.repository.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { commonMessages } from '../utils/constants.js'
-import { ObjectId } from 'mongodb' 
-import { convertMongoosId } from '../utils/utilityFunctions.js'
-import mongoose from 'mongoose'
+import { commonMessages } from '../../utils/constants.js'
+
 const registerUser = async (credentials) => {
     try {
         console.log('credentials', credentials);
@@ -24,7 +22,8 @@ const registerUser = async (credentials) => {
                 last_name: credentials.last_name,
                 email: credentials.email,
                 password: hashedPassword,
-                contact: credentials.contact
+                contact: credentials.contact,
+                role: 'USER'
             }
             console.log('registerData', registerData);
             const registerUserResult = await userRepository.createUser(registerData).catch(() => {
@@ -67,41 +66,61 @@ const loginUser = async (credentials) => {
         throw error;
     }
 }
-    const fetchSingleData = async (credentials) => {
-        console.log('credentials', credentials)
-        try {
-            const userDetails = await userRepository.fetchSingleData(credentials).catch((error) => {
+const fetchSingleData = async (credentials) => {
+    console.log('credentials', credentials)
+    try {
+        const userDetails = await userRepository.fetchSingleData(credentials).catch((error) => {
+            throw commonMessages.INTERNAL_SERVER_ERROR
+        })
+        console.log(userDetails, 'userdetails');
+        if (userDetails) {
+            return ({
+                data: userDetails
+            })
+        } throw { statusCode: 404, message: "User with given credentials Does not exist." }
+    } catch (error) {
+        throw error
+    }
+}
+
+const deleteUser = async (credentials) => {
+    try {
+        console.log(credentials, "credentials");
+        const userDetails = await fetchSingleData(credentials);
+        console.log(userDetails, "delete service");
+        if (userDetails) {
+            return await userRepository.deleteUser(credentials).catch((error) => {
+                throw commonMessages.INTERNAL_SERVER_ERROR;
+            });
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+const fetchAllUserData = async (credentials) => {
+    try {
+        //first check logged in user role 
+        const userDetails = await userRepository.fetchSingleData(credentials).catch((error) => {
+            throw commonMessages.INTERNAL_SERVER_ERROR
+        })
+        if (userDetails.role === 'SUPER_ADMIN') {
+            const users = await userRepository.fetchMultipleData({"role":"USER"}).catch((error) => {
                 throw commonMessages.INTERNAL_SERVER_ERROR
             })
-            console.log(userDetails, 'userdetails');
-            if (userDetails) {
-                return ({
-                    data: userDetails
-                })
-            } throw { statusCode: 404, message: "User with given credentials Does not exist." }
-        } catch (error) {
-            throw error
-        }
+            return ({
+                data: users
+            })
+        }throw { statusCode: 404, message: "No USER Exists" }
+    } catch (error) {
+        throw error
     }
+}
 
-    const deleteUser = async (credentials) => {
-        try {
-            console.log(credentials,"credentials");
-            const userDetails = await fetchSingleData(credentials); 
-            console.log(userDetails,"delete service");
-            if (userDetails) {
-                return await userRepository.deleteUser(credentials).catch((error) => {
-                    throw commonMessages.INTERNAL_SERVER_ERROR;
-                });
-            }
-        } catch (error) {
-            throw error
-        }
-    }
-    
 export default {
     registerUser,
     loginUser,
     fetchSingleData,
-    deleteUser
+    deleteUser,
+    fetchAllUserData
 }

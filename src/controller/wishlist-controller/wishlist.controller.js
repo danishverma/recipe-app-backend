@@ -1,5 +1,5 @@
-import wishlistService from "../services/wishlist.services.js" 
-import { generateResponse } from "../utils/utilityFunctions.js";
+import wishlistService from "../../services/wishlist-service/wishlist.services.js" 
+import { generateResponse } from "../../utils/utilityFunctions.js";
 
 const getAllWishistItems = async(req, res) => {
     try {

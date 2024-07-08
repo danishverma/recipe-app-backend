@@ -1,4 +1,4 @@
-import UserModal from '../Models/user-models/userModal.js'
+import UserModal from '../../Models/user-models/userModal.js'
 
 const fetchMultipleData = async(whereCondition={}) => {
     try {

@@ -9,7 +9,8 @@ const userSchema = new Schema({
     last_name: String,
     email: { type: String, unique: true }, 
     contact: String,
-    password: String
+    password: String,
+    role: String,
 },{timestamps: true});
 
 // Indexing email field for faster querying

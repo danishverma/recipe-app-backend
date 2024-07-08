@@ -1,5 +1,5 @@
-import wishlistRepository from "../repository/wishlist.repository.js";
-import { commonMessages } from "../utils/constants.js";
+import wishlistRepository from "../../repository/wishlist-repository/wishlist.repository.js";
+import { commonMessages } from "../../utils/constants.js";
 
 const getAllWishistItems = async(credentials) => {
     try {
