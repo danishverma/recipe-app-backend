@@ -1,8 +1,8 @@
 import UserModal from '../../Models/user-models/userModal.js'
 
-const fetchMultipleData = async(whereCondition={}) => {
+const fetchMultipleData = async(whereCondition={}, pageSize, page) => {
     try {
-        return await UserModal.find(whereCondition).catch((error) => {
+        return await UserModal.find(whereCondition).limit(pageSize).skip(pageSize * page).catch((error) => {
             throw error
         })
     } catch (error) {

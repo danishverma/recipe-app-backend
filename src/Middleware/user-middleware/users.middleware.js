@@ -1,4 +1,7 @@
+import { jwtDecode } from "jwt-decode";
 import userSignUpSchema from "../../validations/users-validations/users.validaitons.js";
+import usersServices from "../../services/users-service/users.services.js";
+import { commonMessages } from "../../utils/constants.js";
 
 const signUpMiddleware = (req, res, next) => {
     const { error, value } = userSignUpSchema.validate(req.body, {
@@ -16,11 +19,25 @@ const signUpMiddleware = (req, res, next) => {
 
 }
 
-const checkRole = (req, res, next) => {
-    if(req.body.role === 'SUPER_ADMIN'){
-        next()
-    } else {
-        return
+const checkRole = async (req, res, next) => {
+    try {
+        const token = req.headers.token
+        console.log(token, 'token from header');
+        const decodedToken = jwtDecode(token)
+        console.log(decodedToken, 'decodedToken');
+        const userDetails = await usersServices.fetchSingleData({ "id": decodedToken.id }).catch((error) => {
+            throw commonMessages.INTERNAL_SERVER_ERROR
+        })
+        console.log(userDetails, 'userDetails');
+        const role = userDetails.data.role
+        if (role === 'SUPER_ADMIN') {
+            next()
+        }
+        else {
+            return res.status(403).json({ message: "Forbidden" })
+        }
+    } catch (error) {
+        return res.status(403).json({ message: "Forbidden" })
     }
 }
 

@@ -98,20 +98,16 @@ const deleteUser = async (credentials) => {
     }
 }
 
-const fetchAllUserData = async (credentials) => {
+const fetchAllUserData = async (paginationData) => {
     try {
-        //first check logged in user role 
-        const userDetails = await userRepository.fetchSingleData(credentials).catch((error) => {
-            throw commonMessages.INTERNAL_SERVER_ERROR
+        const pageSize = paginationData.pageSize
+        const page = paginationData.page
+        const usersDetails = await userRepository.fetchMultipleData({"role": "USER"}, pageSize, page).catch((error) => {
+            throw commonMessages.INTERNAL_SERVER_ERROR;
         })
-        if (userDetails.role === 'SUPER_ADMIN') {
-            const users = await userRepository.fetchMultipleData({"role":"USER"}).catch((error) => {
-                throw commonMessages.INTERNAL_SERVER_ERROR
-            })
-            return ({
-                data: users
-            })
-        }throw { statusCode: 404, message: "No USER Exists" }
+        if (usersDetails) {
+            return usersDetails
+        }
     } catch (error) {
         throw error
     }

@@ -65,7 +65,7 @@ const deleteUser = async (req, res) => {
 
 const fetchAllUserData = async (req, res) => {
     try {
-        const userDetails = await userServices.fetchAllUserData(req.body).catch((error) => {
+        const userDetails = await userServices.fetchAllUserData(req.query).catch((error) => {
             throw {
                 statusCode: error?.statusCode ?? 500,
                 message: error?.message ??  "Internal server error"
